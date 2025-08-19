@@ -2569,12 +2569,207 @@
             <div>
               <input
                 type="tel"
+                id="whatsapp"
                 name="whatsapp"
-                placeholder="Seu WhatsApp (com DDD)"
+                placeholder="(47) 99999-9999"
                 required
+                maxlength="15"
                 class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-burgundy focus:outline-none text-lg"
               />
+              <div
+                id="erro-telefone"
+                class="text-red-500 text-sm mt-1"
+                style="display: none"
+              ></div>
             </div>
+
+            <script>
+              document
+                .getElementById('whatsapp')
+                .addEventListener('input', function (e) {
+                  // Remove tudo que não é número
+                  let value = e.target.value.replace(/\D/g, '')
+
+                  // Limita a 11 dígitos (2 DDD + 9 número)
+                  if (value.length > 11) {
+                    value = value.slice(0, 11)
+                  }
+
+                  // Aplica a máscara
+                  if (value.length >= 1) {
+                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2')
+                  }
+                  if (value.length >= 10) {
+                    value = value.replace(/(\d{4,5})(\d{4})$/, '$1-$2')
+                  }
+
+                  e.target.value = value
+                })
+
+              // Impede que caracteres não numéricos sejam digitados
+              document
+                .getElementById('whatsapp')
+                .addEventListener('keypress', function (e) {
+                  const allowedKeys = [
+                    '0',
+                    '1',
+                    '2',
+                    '3',
+                    '4',
+                    '5',
+                    '6',
+                    '7',
+                    '8',
+                    '9',
+                    'Backspace',
+                    'Delete',
+                    'Tab',
+                    'ArrowLeft',
+                    'ArrowRight',
+                  ]
+
+                  if (!allowedKeys.includes(e.key)) {
+                    e.preventDefault()
+                  }
+                })
+
+              // Remove formatação ao colar texto
+              document
+                .getElementById('whatsapp')
+                .addEventListener('paste', function (e) {
+                  e.preventDefault()
+
+                  const pasteData = e.clipboardData.getData('text')
+                  const numbersOnly = pasteData.replace(/\D/g, '')
+
+                  if (numbersOnly.length <= 11) {
+                    this.value = numbersOnly
+                    this.dispatchEvent(new Event('input'))
+                  }
+                })
+
+              // Função para validar telefone brasileiro
+              function validarTelefone(telefone) {
+                const numeroLimpo = telefone.replace(/\D/g, '')
+
+                // Deve ter exatamente 10 ou 11 dígitos
+                if (numeroLimpo.length !== 10 && numeroLimpo.length !== 11) {
+                  return false
+                }
+
+                // Extrair DDD (primeiros 2 dígitos)
+                const ddd = numeroLimpo.substring(0, 2)
+
+                // DDDs válidos no Brasil
+                const dddsValidos = [
+                  '11',
+                  '12',
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18',
+                  '19', // SP
+                  '21',
+                  '22',
+                  '24', // RJ
+                  '27',
+                  '28', // ES
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '37',
+                  '38', // MG
+                  '41',
+                  '42',
+                  '43',
+                  '44',
+                  '45',
+                  '46', // PR
+                  '47',
+                  '48',
+                  '49', // SC
+                  '51',
+                  '53',
+                  '54',
+                  '55', // RS
+                  '61', // DF
+                  '62',
+                  '64', // GO
+                  '63', // TO
+                  '65',
+                  '66', // MT
+                  '67', // MS
+                  '68', // AC
+                  '69', // RO
+                  '71',
+                  '73',
+                  '74',
+                  '75',
+                  '77', // BA
+                  '79', // SE
+                  '81',
+                  '87', // PE
+                  '82', // AL
+                  '83', // PB
+                  '84', // RN
+                  '85',
+                  '88', // CE
+                  '86',
+                  '89', // PI
+                  '91',
+                  '93',
+                  '94', // PA
+                  '92',
+                  '97', // AM
+                  '95', // RR
+                  '96', // AP
+                  '98',
+                  '99', // MA
+                ]
+
+                if (!dddsValidos.includes(ddd)) {
+                  return false
+                }
+
+                // Se tem 11 dígitos, o terceiro deve ser 9 (celular)
+                if (numeroLimpo.length === 11) {
+                  const terceiroDigito = numeroLimpo.charAt(2)
+                  if (terceiroDigito !== '9') {
+                    return false
+                  }
+                }
+
+                return true
+              }
+
+              // Remover o evento blur com alert e usar apenas validação visual
+              document
+                .getElementById('whatsapp')
+                .addEventListener('input', function (e) {
+                  // ... código da máscara que já está funcionando ...
+
+                  // Validação em tempo real (opcional)
+                  const telefone = e.target.value
+                  const mensagemErro = document.getElementById('erro-telefone')
+
+                  if (telefone.length >= 10 && !validarTelefone(telefone)) {
+                    e.target.style.borderColor = '#ef4444'
+                    if (mensagemErro) {
+                      mensagemErro.textContent = 'Número inválido'
+                      mensagemErro.style.display = 'block'
+                    }
+                  } else {
+                    e.target.style.borderColor = ''
+                    if (mensagemErro) {
+                      mensagemErro.style.display = 'none'
+                    }
+                  }
+                })
+            </script>
 
             <button
               type="submit"
@@ -2630,6 +2825,22 @@
       const form = document.getElementById('leadForm')
       form.addEventListener('submit', async (e) => {
         e.preventDefault()
+
+        // Validação sem alert
+        const telefone = document.getElementById('whatsapp').value
+        const mensagemErro = document.getElementById('erro-telefone')
+
+        if (!validarTelefone(telefone)) {
+          // Mostrar erro visual
+          document.getElementById('whatsapp').style.borderColor = '#ef4444'
+          if (mensagemErro) {
+            mensagemErro.textContent =
+              'Número inválido - corrija para continuar'
+            mensagemErro.style.display = 'block'
+          }
+          document.getElementById('whatsapp').focus()
+          return // Para a execução
+        }
 
         const submitButton = form.querySelector('button[type="submit"]')
         const originalText = submitButton.textContent
