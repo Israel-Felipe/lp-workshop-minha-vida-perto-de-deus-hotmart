@@ -72,7 +72,7 @@
         },
         "offers": {
           "@type": "Offer",
-          "url": "https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10",
+          "url": "https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10&bid=1755624745162",
           "price": "24.90",
           "priceCurrency": "BRL",
           "availability": "https://schema.org/InStock",
@@ -723,6 +723,57 @@
           font-size: 26px;
         }
       }
+
+      /* Modal Lead Styles */
+      .modal-lead {
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .modal-lead-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 20px;
+        animation: scaleIn 0.3s ease-out;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-lead-body {
+        padding: 2rem;
+      }
+
+      .close-modal-lead {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: #8b1538;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+        z-index: 2001;
+      }
+
+      .close-modal-lead:hover {
+        color: #b91654;
+      }
+
+      @media (max-width: 768px) {
+        .modal-lead-body {
+          padding: 1.5rem;
+        }
+      }
     </style>
 
     <script>
@@ -830,20 +881,7 @@
             <div class="animate-cta flex flex-col gap-3 w-w-auto md:w-[80%]">
               <button
                 id="cta-button"
-                onclick="
-                    try{
-                      fbq('track', 'InitiateCheckout', {
-                        value: 24.90, 
-                        currency: 'BRL',
-                        content_name: 'Workshop MVPD'
-                      }); 
-                      fbq('track', 'Lead');
-                    }catch(e){}
-                    
-                    setTimeout(function(){
-                      window.open('https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10', '_blank');
-                    }, 150);
-                  "
+                onclick="openLeadModal()"
                 class="cta-button-fade bg-burgundy hover:bg-red-800 text-white text-xl lg:text-4xl px-6 py-3 lg:py-2 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl w-full sm:w-auto"
               >
                 <span class="font-Morally mr-2">COMPRAR MEU INGRESSO</span>
@@ -1068,7 +1106,7 @@
 
     <!-- PAGINA DE DEPOIMENTOS -->
     <section
-      class="relative overflow-hidden px-6 md:px-24"
+      class="relative overflow-hidden px-6 md:px-24 md:py-32"
       style="
         background-image: url('imgs/pattern-flores.jpg');
         background-size: cover;
@@ -1379,7 +1417,7 @@
 
         <!-- Card de preços -------------------------------------------------------------------------------------------------------------------------------------------------->
         <div
-          class="bg-[#F291A6] bg-opacity-90 rounded-3xl p-6 md:p-12 shadow-2xl w-full max-w-5xl relative mt-10"
+          class="bg-[#fff] bg-opacity-90 rounded-3xl p-6 md:p-12 shadow-2xl w-full max-w-5xl relative mt-10"
         >
           <!-- Layout em duas colunas -->
           <div
@@ -1527,21 +1565,7 @@
             class="absolute w-full -bottom-6 left-1/2 transform -translate-x-1/2 flex justify-center"
           >
             <button
-              onclick="
-      try{
-        fbq('track', 'InitiateCheckout', {
-          value: 24.90, 
-          currency: 'BRL',
-          content_name: 'Workshop MVPD'
-        }); 
-        fbq('track', 'Lead');
-      }catch(e){}
-      
-      // Redirecionar após rastreamento
-      setTimeout(function(){
-        window.open('https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10', '_blank');
-      }, 150);
-    "
+              onclick="openLeadModal()"
               class="inline-block bg-[#F9DBBD] hover:bg-yellow-100 text-burgundy text-2xl md:text-3xl font-bold px-6 py-2 rounded-3xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl font-Morally text-center no-underline cursor-pointer border-none"
             >
               QUERO MEU INGRESSO
@@ -2508,6 +2532,162 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal do Lead Form -->
+    <div id="leadModal" class="modal-lead" style="display: none">
+      <div class="modal-lead-content">
+        <span class="close-modal-lead" onclick="closeLeadModal()">&times;</span>
+
+        <div class="modal-lead-body">
+          <img
+            src="imgs/logomarca.png"
+            alt="Logo"
+            class="h-16 w-auto mx-auto mb-6"
+          />
+
+          <h3
+            class="text-2xl font-bold text-burgundy text-center mb-4 font-Morally"
+          >
+            ÚLTIMAS VAGAS DISPONÍVEIS!
+          </h3>
+
+          <p class="text-lg text-center text-gray-700 mb-6">
+            Preencha seus dados para garantir sua vaga no Workshop:
+          </p>
+
+          <form id="leadForm" class="space-y-4">
+            <div>
+              <input
+                type="text"
+                name="nome"
+                placeholder="Seu nome completo"
+                required
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-burgundy focus:outline-none text-lg"
+              />
+            </div>
+
+            <div>
+              <input
+                type="tel"
+                name="whatsapp"
+                placeholder="Seu WhatsApp (com DDD)"
+                required
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-burgundy focus:outline-none text-lg"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-burgundy hover:bg-red-800 text-white text-xl font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 font-Morally"
+            >
+              GARANTIR MINHA VAGA AGORA
+            </button>
+          </form>
+
+          <p class="text-sm text-gray-600 text-center mt-4">
+            🔒 Seus dados estão seguros conosco
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Funções do Modal
+      function openLeadModal() {
+        const modal = document.getElementById('leadModal')
+        modal.style.display = 'block'
+        document.body.style.overflow = 'hidden'
+
+        // Rastreamento
+        try {
+          fbq('track', 'Lead')
+          fbq('trackCustom', 'LeadModalOpened')
+        } catch (e) {}
+      }
+
+      function closeLeadModal() {
+        const modal = document.getElementById('leadModal')
+        modal.style.display = 'none'
+        document.body.style.overflow = 'auto'
+      }
+
+      // Fechar modal ao clicar fora
+      document.addEventListener('click', function (e) {
+        const modal = document.getElementById('leadModal')
+        if (e.target === modal) {
+          closeLeadModal()
+        }
+      })
+
+      // Fechar modal com ESC
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closeLeadModal()
+        }
+      })
+
+      // Script para captação do lead
+      const form = document.getElementById('leadForm')
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        const submitButton = form.querySelector('button[type="submit"]')
+        const originalText = submitButton.textContent
+        submitButton.textContent = 'ENVIANDO...'
+        submitButton.disabled = true
+
+        const formData = new FormData(form)
+        const data = {
+          data: {
+            nome: formData.get('nome'),
+            whatsapp: formData.get('whatsapp'),
+            data: new Date().toLocaleString('pt-BR', { hour12: false }),
+          },
+        }
+
+        try {
+          const response = await fetch(
+            'https://sheetdb.io/api/v1/e5xm9o61qqp1p',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            },
+          )
+
+          if (response.ok) {
+            // Rastreamento de conversão
+            try {
+              fbq('track', 'InitiateCheckout', {
+                value: 37.0,
+                currency: 'BRL',
+                content_name: 'Workshop MVPD',
+              })
+              fbq('trackCustom', 'LeadSubmitted')
+            } catch (e) {}
+
+            // Fechar modal
+            closeLeadModal()
+
+            // Redirecionar para checkout após delay
+            setTimeout(function () {
+              window.open(
+                'https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10&bid=1755624745162',
+                '_blank',
+              )
+            }, 200)
+          } else {
+            throw new Error('Erro na resposta do servidor')
+          }
+        } catch (err) {
+          alert('Ops! Houve um erro. Tente novamente.')
+          console.error(err)
+        } finally {
+          submitButton.textContent = originalText
+          submitButton.disabled = false
+        }
+      })
+    </script>
 
     <!-- RODAPÉ -------------------------------------------------------------------------------------------------------------------------------------------------- -->
     <footer class="bg-[#f9dbbd] py-6 px-10 md:px-24">
