@@ -2671,16 +2671,13 @@
 
             // Redirecionar para checkout após delay
             setTimeout(function () {
-              window.open(
-                'https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10&bid=1755624745162',
-                '_blank',
-              )
+              window.location.href =
+                'https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10&bid=1755624745162'
             }, 200)
           } else {
-            throw new Error('Erro na resposta do servidor')
+            console.log('Erro na resposta do servidor')
           }
         } catch (err) {
-          alert('Ops! Houve um erro. Tente novamente.')
           console.error(err)
         } finally {
           submitButton.textContent = originalText
