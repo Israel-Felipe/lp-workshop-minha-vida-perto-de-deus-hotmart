@@ -880,8 +880,24 @@
             <div class="animate-cta flex flex-col gap-3 w-w-auto md:w-[80%]">
               <button
                 id="cta-button"
-                onclick="openLeadModal()"
-                class="cta-button-fade bg-[#DD2C4A] hover:bg-red-800 text-white text-xl lg:text-3xl xl:text-4xl px-3 py-3 lg:py-2 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl w-full sm:w-auto"
+                onclick="
+                    try{
+                      fbq('track', 'InitiateCheckout', {
+                        value: 24.90, 
+                        currency: 'BRL',
+                        content_name: 'Workshop MVPD'
+                      }); 
+                      fbq('track', 'Lead');
+                    }catch(e){}
+
+                                setTimeout(function () {
+              window.location.href =
+                'https://pay.hotmart.com/S101369362A?off=oyb05pen&checkoutMode=10&bid=1755624745162'
+            }, 200)
+                    
+                    ;
+                  "
+                class="cta-button-fade bg-burgundy hover:bg-red-800 text-white text-xl lg:text-4xl px-6 py-3 lg:py-2 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-xl w-full sm:w-auto"
               >
                 <span class="font-Morally mr-2">COMPRAR MEU INGRESSO</span>
               </button>
